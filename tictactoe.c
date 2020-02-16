@@ -1,5 +1,7 @@
+#include "ctype.h"
 #include "stdio.h"
 #include "stdlib.h"
+#include "string.h"
 
 void print_table(char* t) {
 	printf("   | a | b | c\n");
@@ -106,13 +108,13 @@ int negamax(char* table, int depth, char player) {
 	return best_score;
 }
 
-int get_input() {
+int get_input(char player) {
 	char *line = NULL;
 	size_t line_length = 0;
 
 	char x = -1, y = -1;
 	while (x < 0 || x > 2 || y < 0 || y > 2) {
-		printf("> ");
+		printf("%c> ", player);
 		int read = getline(&line, &line_length, stdin);
 		if (read < 2)
 			continue;
@@ -125,9 +127,18 @@ int get_input() {
 int main(int argc, char** argv) {
 	char table[] = { ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' };
 	char turn = 'X';
-	char computer = argc > 1 ? argv[1][0] : 'O';
-	if (computer != 'X' && computer != 'O') {
-		printf("Invalid argument.\n");
+	char ai = ' ';
+	if (argc == 2 && !strcmp(argv[1], "--ai")) {
+		ai = 'O';
+	} else if (argc == 3 && !strcmp(argv[1], "--ai")) {
+		ai = toupper(argv[2][0]);
+		if (strlen(argv[2]) > 1 || (ai != 'X' && ai != 'O')) {
+			printf("Invalid AI turn. Should be X or O\n");
+			exit(1);
+		}
+	} else if (argc != 1) {
+		printf("Invalid arguments. Options:\n");
+		printf("\t%s --ai [X|O]\n", argv[0]);
 		exit(1);
 	}
 	while (1) {
@@ -142,15 +153,15 @@ int main(int argc, char** argv) {
 			break;
 		}
 
-		if (turn == computer) {
-			negamax(table, 0, computer);
+		if (turn == ai) {
+			negamax(table, 0, ai);
 		} else {
 			print_table(table);
 			int move;
-			do move = get_input();
+			do move = get_input(turn);
 			while (table[move] != ' ');
 			table[move] = turn;
 		}
 		turn = turn == 'X' ? 'O' : 'X';
-	};
+	}
 }
