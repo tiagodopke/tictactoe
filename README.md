@@ -19,7 +19,5 @@ To actually make a move, type [column][row], such as:
 ```
 
 ## arguments
-If you want the AI to go first (play the Xs), just run
-```
-./tictactoe X
-```
+If no arguments are provided, tictactoe runs in two-player mode.
+You can provide the argument `--ai` followed by an `X` or an `O`, if you want the AI to play Xs or Os, respectively.
